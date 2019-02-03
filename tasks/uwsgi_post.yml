@@ -1,0 +1,28 @@
+---
+- name: Create uWSGI config folder
+  file:
+    path: "{{ uwsgi_config_path }}"
+    state: directory
+    owner: "{{ uwsgi_user }}"
+    group: "{{ uwsgi_group }}"
+  when: uwsgi_config_check.stat.exists
+
+- name: Copy uWSGI configuration file
+  template:
+    src: "{{ uwsgi_host_config_file_path }}"
+    dest: "{{ uwsgi_config_file_path }}"
+  when: uwsgi_config_check.stat.exists
+
+- name: Create systemd unit file
+  template:
+    src: uwsgi.service.j2
+    dest: /etc/systemd/system/uwsgi.service
+  when: uwsgi_config_check.stat.exists
+
+- name: Ensure uWSGI started and enabled
+  systemd:
+    name: uwsgi
+    state: started
+    enabled: yes
+    daemon_reload: yes
+  when: uwsgi_config_check.stat.exists

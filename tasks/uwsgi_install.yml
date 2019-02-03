@@ -1,0 +1,4 @@
+---
+- name: Install uWSGI with pip
+  pip:
+    name: "{{ uwsgi_pip_package }}"

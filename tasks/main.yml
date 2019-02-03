@@ -1,0 +1,9 @@
+---
+- include_tasks: uwsgi_pre.yml
+- include_tasks: uwsgi_install.yml
+
+- block: # Config uWSGI
+  - include_tasks: uwsgi_search_config.yml
+  - include_tasks: uwsgi_post.yml
+  tags:
+    - uwsgi-config

@@ -1,0 +1,16 @@
+[Unit]
+Description=uWSGI server
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/uwsgi --ini {{ uwsgi_config_file_path }}
+User={{ uwsgi_user }}
+Group={{ uwsgi_group }}
+Restart=on-failure
+KillSignal=SIGQUIT
+Type=notify
+StandardError=syslog
+NotifyAccess=all
+
+[Install]
+WantedBy=multi-user.target

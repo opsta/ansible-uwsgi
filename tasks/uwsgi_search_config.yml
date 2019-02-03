@@ -1,0 +1,30 @@
+---
+- name: Set list of path to look for local uWSGI configuration directory
+  set_fact:
+    uwsgi_search_config_paths: "{{ uwsgi_search_config_paths }} + [ '{{ uwsgi_search_config_path }}' ]"
+  with_items: "{{ group_names }}"
+
+- name: Check if uWSGI configuration directory exists
+  stat:
+    path: "{{ item }}"
+  register: uwsgi_config_check
+  become: false
+  delegate_to: 127.0.0.1
+  with_first_found:
+    - files: "{{ uwsgi_search_config_paths }}"
+      skip: true
+
+- name: Set uWSGI configuration directory
+  set_fact:
+    uwsgi_host_config_path: "{{ uwsgi_config_check.results[0].stat.path }}"
+  when:
+    - uwsgi_config_check.results[0] is defined
+    - uwsgi_config_check.results[0].stat is defined
+    - uwsgi_config_check.results[0].stat.isdir
+
+- name: Check if uWSGI template configuration file is exists
+  stat:
+    path: "{{ uwsgi_host_config_file_path }}"
+  become: false
+  delegate_to: 127.0.0.1
+  register: uwsgi_config_check

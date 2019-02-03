@@ -1,0 +1,10 @@
+---
+- name: Add uWSGI group
+  group:
+    name: "{{ uwsgi_group }}"
+
+- name: Add uWSGI user
+  user:
+    name: "{{ uwsgi_user }}"
+    group: "{{ uwsgi_group }}"
+    shell: /bin/bash
